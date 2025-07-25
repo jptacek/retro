@@ -1,4 +1,9 @@
 # Byte-compiled / optimized / DLL files
+enhanced_reports
+game_log
+radio_broadcasts
+data
+.DS_Store
 __pycache__/
 *.py[codz]
 *$py.class
