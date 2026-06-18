@@ -86,41 +86,60 @@ class RadioBroadcastReporter:
         else:
             return f"We're in the {half} of the {inning_word} inning"
     
+    def get_play_location(self, play_description):
+        """Extracts the location of the play from the description."""
+        parts = play_description.split()
+        try:
+            # Look for common prepositions indicating location
+            if "to" in parts:
+                index = parts.index("to")
+                return " ".join(parts[index:])
+            if "down" in parts:
+                index = parts.index("down")
+                return " ".join(parts[index:])
+            if "up" in parts:
+                index = parts.index("up")
+                return " ".join(parts[index:])
+        except ValueError:
+            return "" # No location found
+        return ""
+
     def parse_radio_play(self, play_description, player_name, defensive_lineup, player_positions, situation=""):
         """Parse play and create radio commentary."""
         excitement = random.choice(self.excitement_phrases)
-        
+        location = self.get_play_location(play_description)
+
         # Check for position code first
         if self.is_position_code(play_description):
             return self.decode_position_play(play_description, player_name, defensive_lineup, player_positions)
 
         if "Single" in play_description:
             phrases = [
-                f"{player_name} {random.choice(self.hit_phrases)} for a single!",
-                f"Base hit! {player_name} finds a hole for a single!",
-                f"{player_name} slaps it through for a base hit!",
-                f"And {player_name} gets good wood on it - single!"
+                f"{player_name} {random.choice(self.hit_phrases)} for a single {location}!",
+                f"Base hit! {player_name} finds a hole for a single {location}!",
+                f"{player_name} slaps it through for a base hit {location}!",
+                f"And {player_name} gets good wood on it - single {location}!"
             ]
         elif "Double" in play_description:
             phrases = [
-                f"{excitement} {player_name} drives it to the gap for a double!",
-                f"{player_name} turns on one and drives it deep - it's a two-bagger!",
-                f"Extra base hit! {player_name} rips a double!",
-                f"{player_name} gets into one and drives it off the wall - double!"
+                f"{excitement} {player_name} drives it {location} for a double!",
+                f"{player_name} turns on one and drives it deep {location} - it's a two-bagger!",
+                f"Extra base hit! {player_name} rips a double {location}!",
+                f"{player_name} gets into one and drives it off the wall {location} - double!"
             ]
         elif "Triple" in play_description:
             phrases = [
-                f"{excitement} {player_name} really gets into this one - it's rolling to the wall - triple!",
-                f"{player_name} drives it deep to the gap - he's flying around first, around second - triple!",
-                f"Oh my! {player_name} absolutely crushed that one - it's a three-base hit!",
-                f"{player_name} connects and this one's deep - triple!"
+                f"{excitement} {player_name} really gets into this one {location} - it's rolling to the wall - triple!",
+                f"{player_name} drives it deep {location} - he's flying around first, around second - triple!",
+                f"Oh my! {player_name} absolutely crushed that one {location} - it's a three-base hit!",
+                f"{player_name} connects and this one's deep {location} - triple!"
             ]
         elif "Home Run" in play_description:
             phrases = [
-                f"{excitement} {player_name} sends this one way back... way back... IT'S GONE! HOME RUN!",
-                f"Get up, get up, GET OUT OF HERE! {player_name} has taken this one downtown!",
-                f"{player_name} turns on this pitch and drives it deep - it's going... going... GONE!",
-                f"Holy mackerel! {player_name} just launched that baseball into orbit! HOME RUN!",
+                f"{excitement} {player_name} sends this one way back... way back... IT'S GONE! HOME RUN {location}!",
+                f"Get up, get up, GET OUT OF HERE! {player_name} has taken this one downtown {location}!",
+                f"{player_name} turns on this pitch and drives it deep {location} - it's going... going... GONE!",
+                f"Holy mackerel! {player_name} just launched that baseball into orbit! HOME RUN {location}!",
                 f"{player_name} got every bit of that one - it's over the fence! Touch 'em all!"
             ]
         elif "Walk" in play_description:
@@ -138,17 +157,16 @@ class RadioBroadcastReporter:
                 f"Caught him looking! {player_name} takes the third strike"
             ]
         elif "Ground out" in play_description:
-            position = play_description.split()[-1] if "position" in play_description else ""
             phrases = [
-                f"{player_name} hits it on the ground - fielded cleanly for the out",
-                f"Routine grounder by {player_name} - easy out",
-                f"{player_name} grounds it over - one away",
-                f"Ground ball, {player_name} - out at first"
+                f"{player_name} hits it on the ground {location} - fielded cleanly for the out",
+                f"Routine grounder by {player_name} {location} - easy out",
+                f"{player_name} grounds it over {location} - one away",
+                f"Ground ball, {player_name} {location} - out at first"
             ]
         elif "Error" in play_description:
             phrases = [
-                f"{player_name} hits a grounder - OH! It's bobbled! Safe on the error!",
-                f"Ground ball by {player_name} - and it's mishandled! He's safe on the error!",
+                f"{player_name} hits a grounder {location} - OH! It's bobbled! Safe on the error!",
+                f"Ground ball by {player_name} {location} - and it's mishandled! He's safe on the error!",
                 f"{player_name} reaches base on an error - lucky break for the White Sox!",
                 f"Fielding mistake! {player_name} is safe when he should have been out!"
             ]
@@ -186,15 +204,15 @@ class RadioBroadcastReporter:
                 ]
             elif "FL" in play_description:
                 phrases = [
-                    f"{player_name} lifts a foul ball - it's caught for the out",
-                    f"Pop foul by {player_name} - it's hauled in",
-                    f"{player_name} pops it up foul and it's caught"
+                    f"{player_name} lifts a foul ball {location} - it's caught for the out",
+                    f"Pop foul by {player_name} {location} - it's hauled in",
+                    f"{player_name} pops it up foul and it's caught {location}"
                 ]
             elif "FO" in play_description:
                 phrases = [
-                    f"{player_name} hits a fly ball - and it's caught",
-                    f"Fly ball by {player_name} - routine catch",
-                    f"{player_name} lifts it up and it's brought in"
+                    f"{player_name} hits a fly ball {location} - and it's caught",
+                    f"Fly ball by {player_name} {location} - routine catch",
+                    f"{player_name} lifts it up and it's brought in {location}"
                 ]
             elif ("sacrifice" in play_description.lower() or 
                   "bunt" in play_description.lower()):
@@ -217,8 +235,8 @@ class RadioBroadcastReporter:
                     f"Contact by {player_name} - and he's retired"
                 ]
         
-        return random.choice(phrases)
-    
+        return random.choice(phrases).replace("  ", " ") # Clean up double spaces
+
     def is_position_code(self, play_description):
         """Check if the play description is a baseball position code."""
         # Position codes are typically 1-9 digits with optional notation
@@ -507,15 +525,17 @@ class RadioBroadcastReporter:
         
         return "\n".join(broadcast)
     
-    def process_all_team_games(self, base_dir="game_log"):
+    def process_all_team_games(self, base_dir="game_log", year=None, team=None):
         """Process all team games and create radio broadcasts."""
         if not os.path.exists(base_dir):
             print(f"Directory {base_dir} not found!")
             return
-        
+
         # Get all team directories
-        team_dirs = [d for d in os.listdir(base_dir) 
+        team_dirs = [d for d in os.listdir(base_dir)
                     if os.path.isdir(os.path.join(base_dir, d))]
+        if team:
+            team_dirs = [d for d in team_dirs if d == team]
         team_dirs.sort()
         
         print(f"🎙️  Creating radio broadcasts for {len(team_dirs)} teams...")
@@ -529,6 +549,9 @@ class RadioBroadcastReporter:
             year_dirs = [d for d in os.listdir(team_path) 
                         if os.path.isdir(os.path.join(team_path, d))]
             
+            if year:
+                year_dirs = [d for d in year_dirs if d == year]
+
             for year in year_dirs:
                 team_year_path = os.path.join(team_path, year)
                 
@@ -623,12 +646,18 @@ class RadioBroadcastReporter:
 
 def main():
     """Main function to run the radio broadcast reporter."""
+    import argparse
+    parser = argparse.ArgumentParser(description="Baseball Radio Broadcast Generator")
+    parser.add_argument("--year", help="Only process games from this year (e.g. 1975)")
+    parser.add_argument("--team", help="Only process games for this team (e.g. CHA)")
+    args = parser.parse_args()
+
     print("🎙️  Starting Baseball Radio Broadcast Generator...")
     print("📻  'Good afternoon, baseball fans!'")
     print("")
-    
+
     reporter = RadioBroadcastReporter()
-    reporter.process_all_team_games()
+    reporter.process_all_team_games(year=args.year, team=args.team)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,11 @@
+{
+  "theme": "GitHub",
+  "autoAccept": false,
+  "checkpointing": {
+    "enabled": true
+  },
+  "fileFiltering": {
+    "respectGitIgnore": true
+  },
+  "usageStatisticsEnabled": true
+}

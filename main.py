@@ -183,10 +183,10 @@ def load_rosters(data_dir):
     return rosters
 
 
-def load_teams(data_dir):
+def load_teams(data_dir, year):
     """Loads team information."""
     teams = {}
-    with open(os.path.join(data_dir, 'TEAM1975'), 'r') as f:
+    with open(os.path.join(data_dir, f'TEAM{year}'), 'r') as f:
         for line in f:
             parts = line.strip().split(',')
             team_id, _, city, name = parts[0], parts[1], parts[2], parts[3]
@@ -195,9 +195,14 @@ def load_teams(data_dir):
 
 
 def main():
-    data_dir = 'data/1975eve'
+    import argparse
+    parser = argparse.ArgumentParser(description="Retrosheet Game Log Processor")
+    parser.add_argument("--year", default="1975", help="Year to process (e.g. 1975)")
+    args = parser.parse_args()
+
+    data_dir = f'data/{args.year}eve'
     rosters = load_rosters(data_dir)
-    teams = load_teams(data_dir)
+    teams = load_teams(data_dir, args.year)
 
     for filename in sorted(os.listdir(data_dir)):
         if filename.endswith((".EVN", ".EVA")):
